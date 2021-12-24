@@ -570,9 +570,9 @@ namespace OpenSourceSCORMLMS.Helpers
             {
                 using (var context = ConnectionHelper.getContext())
                 {
-                    listCourses = context.SCORM_Course_FromSP
-                      .FromSql($"dbo.Sel_CoursesWithUserIndicator {UserId}")
-                      .ToList();
+                    //listCourses = context.SCORM_Course_FromSP
+                    //  .FromSql($"dbo.Sel_CoursesWithUserIndicator {UserId}")
+                    //  .ToList();
                 }
             }
             catch (Exception ex)
@@ -612,7 +612,7 @@ namespace OpenSourceSCORMLMS.Helpers
             {
                 using (var context = ConnectionHelper.getContext())
                 {
-                    var cmi_core = context.cmi_core.FromSql($"dbo.Sel_CoreTrackingID {iSCORM_Course_ID},{UserId} ").FirstOrDefault();
+                    var cmi_core = context.cmi_core.FromSqlRaw($"dbo.Sel_CoreTrackingID {iSCORM_Course_ID},{UserId} ").FirstOrDefault();
                     iCoreID = cmi_core.core_id;
                 }
             }
@@ -629,7 +629,7 @@ namespace OpenSourceSCORMLMS.Helpers
             {
                 using (var context = ConnectionHelper.getContext())
                 {
-                    var session = context.session.FromSql($"dbo.Sel_SessionID {iSCORM_Course_ID},  null, {UserId}, {sessionid}, {iCore_id}, {dtStartTime}").FirstOrDefault();
+                    var session = context.session.FromSqlRaw($"dbo.Sel_SessionID {iSCORM_Course_ID},  null, {UserId}, {sessionid}, {iCore_id}, {dtStartTime}").FirstOrDefault();
                     iSessionID = session.id;
                 }
             }

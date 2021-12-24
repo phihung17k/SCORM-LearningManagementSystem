@@ -38,10 +38,15 @@ namespace OpenSourceSCORMLMS
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services
-                .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver()); //prevent JsonResult from camelCasing on its own
-
+            //services
+            //    .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            //    .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver()); //prevent JsonResult from camelCasing on its own
+            services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+    });
+            services.AddControllers(options => options.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +56,7 @@ namespace OpenSourceSCORMLMS
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                
+
             }
             else
             {
@@ -62,13 +67,13 @@ namespace OpenSourceSCORMLMS
             app.UseAuthentication();
             // the purpose of the HtmlHandler is to make sure that when people are running SCORM courses (i.e. native html files) that they are authenticated
             app.UseHtmlHandler();
-           
+
             app.UseStaticFiles(); // For the wwwroot folder
-            
+
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-           
+
             app.UseMvc();
             var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
             Helpers.ConfigurationHelper.Initialize(Configuration, httpContextAccessor);
@@ -76,7 +81,7 @@ namespace OpenSourceSCORMLMS
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath,  Helpers.ConfigurationHelper.CourseFolder)),
+                    Path.Combine(env.ContentRootPath, Helpers.ConfigurationHelper.CourseFolder)),
                 RequestPath = "/SCORMCourses"
             });
 
